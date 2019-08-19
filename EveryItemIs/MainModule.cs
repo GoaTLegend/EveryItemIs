@@ -191,7 +191,7 @@ namespace EveryItemIs
 
 			for (int i = 0; i < args.Length; i++)
 			{
-				string argument = args[i].ToLower();
+				string argument = args[i].ToLower().Replace("'", "");
 				for (int j = 0; j < availableSettingsShort.Length; j++)
 				{
 					if (availableSettingsShort[j].ToLower() == (argument.Substring(0, args[i].Length - 1)))
@@ -268,10 +268,13 @@ namespace EveryItemIs
 
 		public static void ListSettings(string[] args)
 		{
+			string quickString = "";
 			for (int i = 0; i < availableSettings.Length; i++)
 			{
 				ETGModConsole.Log("  " + availableSettings[i] + " (" + availableSettingsShort[i] + ") : " + settingBools[i]);
+				quickString = quickString + availableSettingsShort[i] + (settingBools[i] ? "T" : "F") + " ";
 			}
+			ETGModConsole.Log(" Current quick setting is: '" + quickString + "'");
 		}
 
 		public static void DisableChallenge(string[] args)
