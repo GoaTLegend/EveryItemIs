@@ -1,0 +1,11 @@
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\bin\Debug\EveryItemIs.dll
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\bin\Debug\EveryItemIs.pdb
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\bin\Debug\Assembly-CSharp.Base.mm.dll
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\bin\Debug\Assembly-CSharp.dll
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\bin\Debug\UnityEngine.CoreModule.Base.mm.dll
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\bin\Debug\UnityEngine.CoreModule.dll
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\obj\Debug\EveryItemIs.csprojAssemblyReference.cache
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\obj\Debug\EveryItemIs.csproj.CoreCompileInputs.cache
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\obj\Debug\EveryItemIs.csproj.CopyComplete
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\obj\Debug\EveryItemIs.dll
+C:\Users\Emil\source\repos\EveryItemIs\EveryItemIs\obj\Debug\EveryItemIs.pdb
