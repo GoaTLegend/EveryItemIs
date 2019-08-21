@@ -11,7 +11,7 @@ namespace EveryItemIs
 {
     public class MainModule : ETGModule
     {
-		private static string modVersion = "1.0";
+		private static string modVersion = "1.0.1";
 		private static int glassGuonID;
 		private static int halfHeartID;
 		private static int heartID;
@@ -491,6 +491,18 @@ namespace EveryItemIs
 				} else if (!settingBools[1] && pickupObject.PickupObjectId == junkID)
 				{
 					continue;
+				} else if (pickupObject.PickupObjectId == keyID)
+				{
+					continue;
+				} else if (pickupObject.PickupObjectId == heartID)
+				{
+					continue;
+				} else if (pickupObject.PickupObjectId == GlobalItemIds.Blank)
+				{
+					continue;
+				} else if (pickupObject.PickupObjectId == halfHeartID)
+				{
+					continue;
 				}
 
 				if (continueThen)
@@ -546,6 +558,7 @@ namespace EveryItemIs
 					{
 						if (!safeItems.Contains(playerItem.GetInstanceID()))
 						{
+							ETGModConsole.Log("egg");
 							LootEngine.SpawnItem(itemPool.ElementAt(UnityEngine.Random.Range(0, itemPool.Count)).gameObject, pickupObject.transform.position, Vector2.up, 1.0f);
 							UnityEngine.Object.Destroy(playerItem.gameObject);
 						}
