@@ -11,7 +11,7 @@ namespace EveryItemIs
 {
     public class MainModule : ETGModule
     {
-		private static string modVersion = "1.0.1";
+		private static string modVersion = "1.1";
 		private static int glassGuonID;
 		private static int halfHeartID;
 		private static int heartID;
@@ -137,11 +137,16 @@ namespace EveryItemIs
         public override void Start()
         {
 			ETGModConsole.Commands.AddGroup("itempool");
-			ETGModConsole.Commands.GetGroup("itempool").AddUnit("add", AddItemToPool, ItemAutocompletionSettings);
+			ETGModConsole.Commands.GetGroup("itempool").AddGroup("add", AddItemToPool, ItemAutocompletionSettings);
+			ETGModConsole.Commands.GetGroup("itempool").GetGroup("add").AddGroup("all");
+			ETGModConsole.Commands.GetGroup("itempool").GetGroup("add").GetGroup("all").AddUnit("guns", AddGuns);
+			ETGModConsole.Commands.GetGroup("itempool").GetGroup("add").GetGroup("all").AddUnit("passives", AddPassives);
+			ETGModConsole.Commands.GetGroup("itempool").GetGroup("add").GetGroup("all").AddUnit("actives", AddActives);
 			ETGModConsole.Commands.GetGroup("itempool").AddGroup("remove", RemoveItemFromPool, RemoveAutocompletionSettings);
 			ETGModConsole.Commands.GetGroup("itempool").GetGroup("remove").AddUnit("all", EmptyPool);
 			ETGModConsole.Commands.GetGroup("itempool").AddUnit("list", ListPool);
 			ETGModConsole.Commands.AddGroup("challenge");
+			ETGModConsole.Commands.GetGroup("challenge").AddUnit("reducelag", ReduceLag);
 			ETGModConsole.Commands.GetGroup("challenge").AddUnit("enable", EnableChallenge);
 			ETGModConsole.Commands.GetGroup("challenge").AddUnit("disable", DisableChallenge);
 			ETGModConsole.Commands.GetGroup("challenge").AddGroup("settings", ConfigureSettings, SettingsAutocompletionSettings);
@@ -179,6 +184,67 @@ namespace EveryItemIs
         {
             
         }
+
+		public static void ReduceLag(string[] args)
+		{
+			if (challengeEnabled)
+			{
+				MakeSurent();
+				ChallengePerformer.timeToWait = 0.5f;
+				MakeSure();
+			} else
+			{
+				ETGModConsole.Log("Enable challenge first.");
+			}
+		}
+
+		public static void AddGuns(string[] args)
+		{
+			foreach (PickupObject item in PickupObjectDatabase.Instance.Objects)
+			{
+				if (item is Gun)
+				{
+					itemPool.Add(item);
+				}
+			}
+			if (challengeEnabled == true)
+			{
+				MakeSure();
+			}
+			ETGModConsole.Log("All guns have been added!");
+		}
+
+		public static void AddPassives(string[] args)
+		{
+			foreach (PickupObject item in PickupObjectDatabase.Instance.Objects)
+			{
+				if (item is PassiveItem)
+				{
+					itemPool.Add(item);
+				}
+			}
+			if (challengeEnabled == true)
+			{
+				MakeSure();
+			}
+			ETGModConsole.Log("All passive items have been added!");
+		}
+
+		public static void AddActives(string[] args)
+		{
+			foreach (PickupObject item in PickupObjectDatabase.Instance.Objects)
+			{
+				if (item is PlayerItem)
+				{
+					itemPool.Add(item);
+				}
+			}
+			if (challengeEnabled == true)
+			{
+				MakeSure();
+			}
+			ETGModConsole.Log("All active items have been added!");
+		}
 
 		public static void QuickSettings (string[] args)
 		{
@@ -438,7 +504,7 @@ namespace EveryItemIs
 			{
 				return;
 			}
-
+			
             foreach (PickupObject pickupObject in UnityEngine.Object.FindObjectsOfType<PickupObject>())
             {
                 //ETGModConsole.Log("ID: " + pickupObject.PickupObjectId + " | InstanceID: " + pickupObject.GetInstanceID() + " | Name: " + pickupObject.name);
@@ -453,35 +519,53 @@ namespace EveryItemIs
 					}
 				}
 
+				if (continueThen)
+				{
+					continue;
+				}
+				
+				if (pickupObject.GetComponentInParent<AIActor>() != null)
+				{
+					if (pickupObject.GetComponentInParent<AIActor>().IsMimicEnemy)
+					{
+						continue;
+					}
+				}
+
+				if (pickupObject.GetComponentInParent<BeholsterTentacleController>() != null)
+				{
+					continue;
+				}
+
 				if (GameManager.Instance.PrimaryPlayer != null)
 				{
 					if (GameManager.Instance.PrimaryPlayer.characterIdentity == PlayableCharacters.Pilot)
 					{
 						if (pickupObject.PickupObjectId == Game.Items.Get("trusty_lockpicks").PickupObjectId)
 						{
-							continueThen = true;
+							continue;
 						}
 					} else if (GameManager.Instance.PrimaryPlayer.characterIdentity == PlayableCharacters.Convict)
 					{
 						if (pickupObject.PickupObjectId == Game.Items.Get("molotov").PickupObjectId)
 						{
-							continueThen = true;
+							continue;
 						}
 					} else if (GameManager.Instance.PrimaryPlayer.characterIdentity == PlayableCharacters.Soldier)
 					{
 						if (pickupObject.PickupObjectId == Game.Items.Get("supply_drop").PickupObjectId)
 						{
-							continueThen = true;
+							continue;
 						}
 					} else if (GameManager.Instance.PrimaryPlayer.characterIdentity == PlayableCharacters.Robot)
 					{
 						if (pickupObject.PickupObjectId == Game.Items.Get("coolant_leak").PickupObjectId)
 						{
-							continueThen = true;
+							continue;
 						}
 					}
 				}
-
+				
 				if (!settingBools[2] && pickupObject.PickupObjectId == glassGuonID)
 				{
 					continue;
@@ -505,10 +589,6 @@ namespace EveryItemIs
 					continue;
 				}
 
-				if (continueThen)
-				{
-					continue;
-				}
 
 
                 if (pickupObject as Gun != null && settingBools[3])
@@ -558,7 +638,6 @@ namespace EveryItemIs
 					{
 						if (!safeItems.Contains(playerItem.GetInstanceID()))
 						{
-							ETGModConsole.Log("egg");
 							LootEngine.SpawnItem(itemPool.ElementAt(UnityEngine.Random.Range(0, itemPool.Count)).gameObject, pickupObject.transform.position, Vector2.up, 1.0f);
 							UnityEngine.Object.Destroy(playerItem.gameObject);
 						}
@@ -666,7 +745,7 @@ namespace EveryItemIs
 					}
 				}
 			}
-
+			
 			foreach (RewardPedestal pedestal in UnityEngine.Object.FindObjectsOfType<RewardPedestal>())
 			{
 				if (pedestal.pickedUp || pedestal.contents == null)
